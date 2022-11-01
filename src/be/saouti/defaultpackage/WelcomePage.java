@@ -39,6 +39,7 @@ public class WelcomePage extends JFrame {
 	private JTextField dateOfBirthTfld;
 	private JTextField usernameTfld;
 	private JPasswordField passwordTfld;
+	private JPasswordField confpasswordTField;
 
 	/**
 	 * Launch the application.
@@ -83,7 +84,7 @@ public class WelcomePage extends JFrame {
 		JPanel registerPnl = new JPanel();
 		registerPnl.setBorder(new LineBorder(new Color(171, 173, 179), 3, true));
 		registerPnl.setBackground(new Color(255, 247, 233));
-		registerPnl.setBounds(150, 100, 350, 291);
+		registerPnl.setBounds(150, 100, 350, 307);
 		contentPane.add(registerPnl);
 		registerPnl.setLayout(null);
 		
@@ -97,9 +98,9 @@ public class WelcomePage extends JFrame {
 		JPanel registerFieldsPnl = new JPanel();
 		registerFieldsPnl.setBorder(new EmptyBorder(0, 0, 0, 0));
 		registerFieldsPnl.setBackground(new Color(255, 247, 233));
-		registerFieldsPnl.setBounds(25, 60, 300, 129);
+		registerFieldsPnl.setBounds(25, 60, 300, 135);
 		registerPnl.add(registerFieldsPnl);
-		registerFieldsPnl.setLayout(new GridLayout(4,1,40,5));
+		registerFieldsPnl.setLayout(new GridLayout(5,1,40,5));
 		
 		JLabel usernameLbl = new JLabel("Username");
 		usernameLbl.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
@@ -117,7 +118,7 @@ public class WelcomePage extends JFrame {
 		registerFieldsPnl.add(pseudoTfld);
 		pseudoTfld.setColumns(10);
 		
-		JLabel password_lbl = new JLabel("Password");
+		JLabel password_lbl = new JLabel("Password+Conf");
 		password_lbl.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
 		registerFieldsPnl.add(password_lbl);
 		
@@ -133,6 +134,9 @@ public class WelcomePage extends JFrame {
 		registerFieldsPnl.add(dateOfBirthTfld);
 		dateOfBirthTfld.setColumns(10);
 		
+		confpasswordTField = new JPasswordField();
+		registerFieldsPnl.add(confpasswordTField);
+		
 		JButton registerBtn = new JButton("Register");
 		registerBtn.setBorder(new LineBorder(new Color(255, 255, 255), 2, true));
 		registerBtn.setForeground(new Color(255, 255, 255));
@@ -146,9 +150,11 @@ public class WelcomePage extends JFrame {
 				String username = usernameTfld.getText();
 				String pseudo = pseudoTfld.getText();
 				String password = new String(passwordTfld.getPassword());
+				String confpassword = new String(confpasswordTField.getPassword());
 				String dateOfBirth = dateOfBirthTfld.getText();
 				Player player = new Player();
 				try {
+					if(!password.equals(confpassword)) throw new Exception("Registration ERROR: the two passwords are not the same !");
 					player.setUsername(username);
 					player.setPassword(password);
 					player.setPseudo(pseudo);
@@ -170,15 +176,14 @@ public class WelcomePage extends JFrame {
 							JOptionPane.showMessageDialog(null, "Your registration failed, please try later...");
 					else JOptionPane.showMessageDialog(null, "Registration ERROR:  This username already exists!");
 				}
-				
 			}
 		});
-		registerBtn.setBounds(75, 200, 200, 23);
+		registerBtn.setBounds(75, 210, 200, 23);
 		registerPnl.add(registerBtn);
 		
 		JLabel AALbl = new JLabel("You already have an account? ");
 		AALbl.setFont(new Font("Gill Sans MT", Font.PLAIN, 12));
-		AALbl.setBounds(75, 223, 149, 14);
+		AALbl.setBounds(75, 244, 149, 14);
 		registerPnl.add(AALbl);
 		JLabel loginPgBtn = new JLabel("Login");
 		loginPgBtn.addMouseListener(new MouseAdapter() {
@@ -194,7 +199,7 @@ public class WelcomePage extends JFrame {
 		loginPgBtn.setHorizontalAlignment(SwingConstants.CENTER);
 		loginPgBtn.setFont(new Font("Gill Sans MT", Font.BOLD | Font.ITALIC, 11));
 		loginPgBtn.setForeground(new Color(95, 157, 247));
-		loginPgBtn.setBounds(221, 225, 49, 13);
+		loginPgBtn.setBounds(226, 246, 49, 13);
 		registerPnl.add(loginPgBtn);
 	}
 }
