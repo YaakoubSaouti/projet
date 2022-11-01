@@ -150,9 +150,11 @@ public class WelcomePage extends JFrame {
 				String username = usernameTfld.getText();
 				String pseudo = pseudoTfld.getText();
 				String password = new String(passwordTfld.getPassword());
+				String confpassword = new String(confpasswordTField.getPassword());
 				String dateOfBirth = dateOfBirthTfld.getText();
 				Player player = new Player();
 				try {
+					if(!password.equals(confpassword)) throw new Exception("Registration ERROR: the two passwords are not the same !");
 					player.setUsername(username);
 					player.setPassword(password);
 					player.setPseudo(pseudo);
@@ -174,7 +176,6 @@ public class WelcomePage extends JFrame {
 							JOptionPane.showMessageDialog(null, "Your registration failed, please try later...");
 					else JOptionPane.showMessageDialog(null, "Registration ERROR:  This username already exists!");
 				}
-				
 			}
 		});
 		registerBtn.setBounds(75, 210, 200, 23);
