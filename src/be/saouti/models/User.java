@@ -41,5 +41,7 @@ public abstract class User {
 	}
 	
 	//Methods
-	//TODO Implement Login()
+	public boolean login(String username, String password){
+		return (this.username.equals(username) && this.password.equals(password));
+	}
 }

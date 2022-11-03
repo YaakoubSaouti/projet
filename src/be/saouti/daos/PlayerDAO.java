@@ -5,8 +5,8 @@ import java.time.format.DateTimeFormatter;
 
 import be.saouti.models.Player;
 
-public class PlayerDAO extends DAO<Player> implements IPlayerDAO{
-	//Constructor
+public class PlayerDAO extends DAO<Player>{
+
 	public PlayerDAO(Connection conn) {
 		super(conn);
 	}
@@ -70,8 +70,7 @@ public class PlayerDAO extends DAO<Player> implements IPlayerDAO{
 	}
 
 	@Override
-	public boolean update(Player obj) {
-		Player player = new Player();
+	public boolean update(Player player) {
 		try{
 			PreparedStatement prepare = connect.prepareStatement(
 	            "UPDATE user t1, player t2 "
@@ -97,14 +96,14 @@ public class PlayerDAO extends DAO<Player> implements IPlayerDAO{
 
 	@Override
 	public Player find(int id) {
-		Player player = new Player();
+		Player player = null;
 		try{
 			PreparedStatement prepare = connect.prepareStatement(
-                "SELECT * FROM user,player WHERE user_id = ?"
+                "SELECT * FROM user,player WHERE user_id = ? AND user.user_id = player.user_id"
             );
 			prepare.setInt(1,id);
 			ResultSet result = prepare.executeQuery();
-			if(result.first()) 
+			if(result.next()) 
 				player = new Player(
 					id,
 					result.getString("username"),
@@ -121,20 +120,28 @@ public class PlayerDAO extends DAO<Player> implements IPlayerDAO{
 		return player;
 	}
 
-	@Override
-	public boolean exists(String username) {
+	public Player find(String username){
+		Player player = null;
 		try{
 			PreparedStatement prepare = connect.prepareStatement(
-                "SELECT user_id FROM user"
-                +" WHERE username = ?"
+                "SELECT * FROM user,player WHERE username = ? AND user.user_id = player.user_id"
             );
 			prepare.setString(1,username);
 			ResultSet result = prepare.executeQuery();
-			if(result.next()) return true;
+			if(result.next()) 
+				player = new Player(
+					result.getInt("user_id"),
+					result.getString("username"),
+					result.getString("password"),
+					result.getInt("credit"),
+					result.getString("pseudo"),
+					new java.sql.Date(result.getDate("reg_date").getTime()).toLocalDate(), 
+					new java.sql.Date(result.getDate("dob").getTime()).toLocalDate()
+				);
 		}catch(SQLException e){
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-		return false;
+		return player;
 	}
 }

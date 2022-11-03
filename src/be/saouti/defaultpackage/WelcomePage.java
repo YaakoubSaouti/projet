@@ -169,7 +169,7 @@ public class WelcomePage extends JFrame {
 				}
 				if(formOK) {
 					PlayerDAO playerDAO = new PlayerDAO(VideoGamesConnection.getInstance());
-					if(!playerDAO.exists(player.getUsername()))
+					if(playerDAO.find(player.getUsername())==null)
 						if(playerDAO.create(player))
 							JOptionPane.showMessageDialog(null, "You successfully registered,\nYou can login now !");
 						else
@@ -189,7 +189,9 @@ public class WelcomePage extends JFrame {
 		loginPgBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(null, "Login Page"); 
+				LoginPage lp = new LoginPage();
+				lp.setVisible(true);
+				dispose();
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
