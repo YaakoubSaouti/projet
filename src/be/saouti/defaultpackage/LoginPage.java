@@ -117,15 +117,17 @@ public class LoginPage extends JFrame {
 		JButton loginBtn = new JButton("Login");
 		loginBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean formOK = false;
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 				String username = usernameTfld.getText();
 				String password = new String(passwordTfld.getPassword());
 				UserDAO userDAO = new UserDAO(VideoGamesConnection.getInstance());
 				User user = userDAO.find(username);
 				if(user!=null && user.login(username, password)) {
-					if(user instanceof Administrator) 
-						JOptionPane.showMessageDialog(null, "You are an Admin!");
+					Session.getInstance().set("id", Integer.toString(user.getId()));
+					if(user instanceof Administrator) {
+						dispose();
+						AdminMainPage amp = new AdminMainPage((Administrator) user);
+						amp.setVisible(true);
+					}
 					if(user instanceof Player) 
 						JOptionPane.showMessageDialog(null, "You are a player!");
 				}else JOptionPane.showMessageDialog(null, "Invalid credentials!");

@@ -89,7 +89,7 @@ public class AdministratorDAO extends DAO<Administrator>{
 		Administrator admin = null;
 		try{
 			PreparedStatement prepare = connect.prepareStatement(
-                "SELECT * FROM user,administrator WHERE id = ? AND user.user_id = administrator.user_id"
+                "SELECT * FROM user,administrator WHERE user_id = ? AND user.user_id = administrator.user_id"
             );
 			prepare.setInt(1,id);
 			ResultSet result = prepare.executeQuery();
