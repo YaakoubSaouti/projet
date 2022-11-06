@@ -119,17 +119,19 @@ public class LoginPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String username = usernameTfld.getText();
 				String password = new String(passwordTfld.getPassword());
-				UserDAO userDAO = new UserDAO(VideoGamesConnection.getInstance());
-				User user = userDAO.find(username);
-				if(user!=null && user.login(username, password)) {
+				User user = User.login(username, password);
+				if(user != null) {
 					Session.getInstance().set("id", Integer.toString(user.getId()));
-					if(user instanceof Administrator) {
+					if(user instanceof Administrator admin) {
 						dispose();
-						AdminMainPage amp = new AdminMainPage((Administrator) user);
+						AdminMainPage amp = new AdminMainPage(admin);
 						amp.setVisible(true);
 					}
-					if(user instanceof Player) 
-						JOptionPane.showMessageDialog(null, "You are a player!");
+					if(user instanceof Player player) {
+//						dispose();
+//						AdminMainPage amp = new PlayerMainPage(player);
+//						amp.setVisible(true);
+					}
 				}else JOptionPane.showMessageDialog(null, "Invalid credentials!");
 			}
 		});

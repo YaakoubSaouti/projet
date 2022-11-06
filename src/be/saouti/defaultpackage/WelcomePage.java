@@ -145,7 +145,6 @@ public class WelcomePage extends JFrame {
 		registerBtn.setBorderPainted(false);
 		registerBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean formOK = false;
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 				String username = usernameTfld.getText();
 				String pseudo = pseudoTfld.getText();
@@ -154,27 +153,19 @@ public class WelcomePage extends JFrame {
 				String dateOfBirth = dateOfBirthTfld.getText();
 				Player player = new Player();
 				try {
-					if(!password.equals(confpassword)) throw new Exception("Registration ERROR: the two passwords are not the same !");
+					LocalDate dob = LocalDate.parse(dateOfBirth, formatter);
+					Player.register(username,pseudo,password,dob);
+					if(!password.equals(confpassword)) throw new Exception("The two passwords are not the same !");
 					player.setUsername(username);
 					player.setPassword(password);
 					player.setPseudo(pseudo);
-					player.setDateOfBirth(LocalDate.parse(dateOfBirth, formatter));
-					player.setRegistrationDate(LocalDate.now());
-					player.setCredit(10);
-					formOK = true;
+					player.setDateOfBirth(dob);
+					player.create();
+					JOptionPane.showMessageDialog(null, "You successfully registered\n You can login now !");
 				}catch(DateTimeParseException pe) {
-					JOptionPane.showMessageDialog(null, "Registration ERROR: Date should be like dd/MM/yyyy !");
+					JOptionPane.showMessageDialog(null, "Date should be like dd/MM/yyyy !");
 				}catch(Exception ex){
-					JOptionPane.showMessageDialog(null, "Registration ERROR: " + ex.getMessage());
-				}
-				if(formOK) {
-					PlayerDAO playerDAO = new PlayerDAO(VideoGamesConnection.getInstance());
-					if(playerDAO.find(player.getUsername())==null)
-						if(playerDAO.create(player))
-							JOptionPane.showMessageDialog(null, "You successfully registered,\nYou can login now !");
-						else
-							JOptionPane.showMessageDialog(null, "Your registration failed, please try later...");
-					else JOptionPane.showMessageDialog(null, "Registration ERROR:  This username already exists!");
+					JOptionPane.showMessageDialog(null, ex.getMessage());
 				}
 			}
 		});

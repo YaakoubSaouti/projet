@@ -4,23 +4,39 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import be.saouti.connection.VideoGamesConnection;
 import be.saouti.daos.AdministratorDAO;
+import be.saouti.daos.VideoGameDAO;
 import be.saouti.models.Administrator;
+import be.saouti.models.VideoGame;
 
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AdminMainPage extends JFrame {
 
 	private JPanel contentPane;
+	private JTextField costFld;
+	private JTable table = new JTable();;
 
 	/**
 	 * Launch the application.
@@ -43,10 +59,10 @@ public class AdminMainPage extends JFrame {
 	 * @param user 
 	 */
 	public AdminMainPage(){}
+
 	public AdminMainPage(Administrator admin){
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		AdministratorDAO administratorDAO = new AdministratorDAO(VideoGamesConnection.getInstance());
-		admin = administratorDAO.find(Integer.parseInt(Session.getInstance().get("id")));
+		refresh(VideoGame.getAll());
 		setBounds(300, 300, 650, 500);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
@@ -74,6 +90,14 @@ public class AdminMainPage extends JFrame {
 		topbarPnl.add(usernameLbl);
 		
 		JButton btnNewButton = new JButton("Logout");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Session.getInstance().destroy();
+				LoginPage lp = new LoginPage();
+				lp.setVisible(true);
+				dispose();
+			}
+		});
 		btnNewButton.setBorder(null);
 		btnNewButton.setForeground(Color.WHITE);
 		btnNewButton.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
@@ -81,5 +105,77 @@ public class AdminMainPage extends JFrame {
 		btnNewButton.setBorderPainted(false);
 		btnNewButton.setBounds(568, 27, 58, 23);
 		topbarPnl.add(btnNewButton);
+		
+		
+		JLabel lblName = new JLabel("");
+		lblName.setForeground(new Color(215, 115, 29));
+		lblName.setFont(new Font("Gill Sans MT", Font.BOLD, 11));
+		lblName.setBounds(437, 130, 189, 28);
+		contentPane.add(lblName);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(27, 106, 400, 230);
+		contentPane.add(scrollPane);
+		
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int i = table.getSelectedRow();
+				costFld.setText((String)table.getValueAt(i, 3));
+				lblName.setText((String)table.getValueAt(i, 1)+"("+(String)table.getValueAt(i, 2)+")");
+			}
+		});
+		table.setFont(new Font("Gill Sans MT", Font.PLAIN, 11));
+		scrollPane.setViewportView(table);
+		
+		JLabel lblChangeTheCost = new JLabel("Change the cost");
+		lblChangeTheCost.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
+		lblChangeTheCost.setBounds(437, 105, 115, 28);
+		contentPane.add(lblChangeTheCost);
+		
+		costFld = new JTextField();
+		costFld.setBounds(437, 168, 157, 28);
+		contentPane.add(costFld);
+		costFld.setColumns(10);
+		
+		JButton updateBtn = new JButton("Update");
+		updateBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int i = table.getSelectedRow();
+				if(i >= 0) {
+					VideoGame vg = VideoGame.getVideoGame(Integer.parseInt((String)table.getValueAt(i, 0)));
+					try {
+						vg.setCreditCost(Integer.parseInt(costFld.getText()));
+						vg.update();
+					}catch(Exception ex){
+						JOptionPane.showMessageDialog(null, ex.getMessage());
+					}
+				}
+				refresh(VideoGame.getAll());
+			}
+		});
+		updateBtn.setForeground(Color.WHITE);
+		updateBtn.setFont(new Font("Gill Sans MT", Font.BOLD, 14));
+		updateBtn.setBorderPainted(false);
+		updateBtn.setBorder(new LineBorder(new Color(255, 255, 255), 2, true));
+		updateBtn.setBackground(new Color(23, 70, 162));
+		updateBtn.setBounds(437, 220, 157, 23);
+		contentPane.add(updateBtn);
+	}
+	
+	private void refresh(List<VideoGame> videogames) {
+		List<String[]> rows = new ArrayList<String[]>();
+		for (VideoGame vg : videogames) {
+			String[] row = {Integer.toString(vg.getId()),vg.getName(),
+					vg.getConsole(),Integer.toString(vg.getCreditCost())
+			};
+			rows.add(row);
+		}
+		table.setModel(new DefaultTableModel(
+			rows.toArray(new Object[][] {}),
+			new String[] {
+				"Id", "Name", "Console", "Cost"
+			}
+		));
 	}
 }

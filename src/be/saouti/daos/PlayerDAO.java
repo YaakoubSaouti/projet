@@ -5,10 +5,12 @@ import java.time.format.DateTimeFormatter;
 
 import be.saouti.models.Player;
 
-public class PlayerDAO extends DAO<Player>{
+public class PlayerDAO implements IPlayerDAO{
 
-	public PlayerDAO(Connection conn) {
-		super(conn);
+	protected Connection connect = null;
+	
+	public PlayerDAO(Connection conn){
+		this.connect = conn;
 	}
 
 	@Override
@@ -52,21 +54,6 @@ public class PlayerDAO extends DAO<Player>{
 				return false;
 			}
 		}
-	}
-
-	@Override
-	public boolean delete(Player player) {
-		try{
-			PreparedStatement prepare = connect.prepareStatement(
-	            "DELETE * FROM user WHERE user_id = ?"
-	        );
-			prepare.setInt(1, player.getId());
-			prepare.executeUpdate();
-		}catch(SQLException e){
-			e.printStackTrace();
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -120,6 +107,7 @@ public class PlayerDAO extends DAO<Player>{
 		return player;
 	}
 
+	@Override
 	public Player find(String username){
 		Player player = null;
 		try{
