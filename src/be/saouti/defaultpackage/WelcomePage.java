@@ -6,9 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
-import be.saouti.connection.VideoGamesConnection;
-import be.saouti.daos.PlayerDAO;
 import be.saouti.models.Player;
 
 import java.awt.Color;
@@ -34,6 +31,10 @@ import javax.swing.JPasswordField;
 
 public class WelcomePage extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField pseudoTfld;
 	private JTextField dateOfBirthTfld;

@@ -3,9 +3,7 @@ package be.saouti.defaultpackage;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -15,9 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import be.saouti.connection.VideoGamesConnection;
-import be.saouti.daos.AdministratorDAO;
-import be.saouti.daos.VideoGameDAO;
 import be.saouti.models.Administrator;
 import be.saouti.models.VideoGame;
 
@@ -27,13 +22,20 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextArea;
 
 public class AdminMainPage extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField costFld;
 	private JTable table = new JTable();;
@@ -69,6 +71,10 @@ public class AdminMainPage extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		JTextArea lblName = new JTextArea();
+		lblName.setBounds(437, 169, 163, 72);
+		contentPane.add(lblName);
 		
 		JPanel topbarPnl = new JPanel();
 		topbarPnl.setBackground(new Color(255, 247, 233));
@@ -106,17 +112,11 @@ public class AdminMainPage extends JFrame {
 		btnNewButton.setBounds(568, 27, 58, 23);
 		topbarPnl.add(btnNewButton);
 		
-		
-		JLabel lblName = new JLabel("");
-		lblName.setForeground(new Color(215, 115, 29));
-		lblName.setFont(new Font("Gill Sans MT", Font.BOLD, 11));
-		lblName.setBounds(437, 130, 189, 28);
-		contentPane.add(lblName);
-		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(27, 106, 400, 230);
 		contentPane.add(scrollPane);
 		
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -130,13 +130,14 @@ public class AdminMainPage extends JFrame {
 		
 		JLabel lblChangeTheCost = new JLabel("Change the cost");
 		lblChangeTheCost.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
-		lblChangeTheCost.setBounds(437, 105, 115, 28);
+		lblChangeTheCost.setBounds(437, 130, 115, 28);
 		contentPane.add(lblChangeTheCost);
 		
 		costFld = new JTextField();
-		costFld.setBounds(437, 168, 157, 28);
+		costFld.setBounds(437, 256, 157, 28);
 		contentPane.add(costFld);
 		costFld.setColumns(10);
+		
 		
 		JButton updateBtn = new JButton("Update");
 		updateBtn.addActionListener(new ActionListener() {
@@ -147,10 +148,13 @@ public class AdminMainPage extends JFrame {
 					try {
 						vg.setCreditCost(Integer.parseInt(costFld.getText()));
 						vg.update();
+					}catch(NumberFormatException ex){
+						JOptionPane.showMessageDialog(null, costFld.getText()+"is not a valid number !");
 					}catch(Exception ex){
 						JOptionPane.showMessageDialog(null, ex.getMessage());
 					}
 				}
+				lblName.setText("");
 				refresh(VideoGame.getAll());
 			}
 		});
@@ -159,7 +163,7 @@ public class AdminMainPage extends JFrame {
 		updateBtn.setBorderPainted(false);
 		updateBtn.setBorder(new LineBorder(new Color(255, 255, 255), 2, true));
 		updateBtn.setBackground(new Color(23, 70, 162));
-		updateBtn.setBounds(437, 220, 157, 23);
+		updateBtn.setBounds(437, 295, 157, 23);
 		contentPane.add(updateBtn);
 	}
 	

@@ -1,11 +1,6 @@
 package be.saouti.daos;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
-
 import be.saouti.models.Administrator;
 import be.saouti.models.Player;
 import be.saouti.models.User;

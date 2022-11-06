@@ -1,7 +1,4 @@
 package be.saouti.models;
-
-import java.util.regex.Pattern;
-
 import be.saouti.connection.VideoGamesConnection;
 import be.saouti.daos.UserDAO;
 

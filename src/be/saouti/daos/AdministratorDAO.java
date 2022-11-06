@@ -4,10 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 
 import be.saouti.models.Administrator;
-import be.saouti.models.Player;
 
 public class AdministratorDAO implements IAdministratorDAO{
 	protected Connection connect = null;

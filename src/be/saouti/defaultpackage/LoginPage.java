@@ -14,9 +14,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import be.saouti.connection.VideoGamesConnection;
-import be.saouti.daos.PlayerDAO;
-import be.saouti.daos.UserDAO;
 import be.saouti.models.Administrator;
 import be.saouti.models.Player;
 import be.saouti.models.User;
@@ -27,13 +24,14 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.awt.event.ActionEvent;
 
 public class LoginPage extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField usernameTfld;
 	private JPasswordField passwordTfld;
