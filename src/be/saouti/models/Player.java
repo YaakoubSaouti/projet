@@ -74,4 +74,23 @@ public class Player extends User{
 		registrationDate = LocalDate.now();
 		return new PlayerDAO(VideoGamesConnection.getInstance()).create(this);
 	}
+	
+	public boolean update(){
+		return new PlayerDAO(VideoGamesConnection.getInstance()).update(this);
+	}
+	
+	//Overrides
+	@Override
+	public int hashCode() {
+		return this.toString().hashCode();
+	}
+	@Override
+	public String toString() {
+		return this.getId() + this.getUsername() + this.getPassword();
+	}
+	@Override
+	public boolean equals(Object obj){
+		if (obj ==null || obj.getClass()!=this.getClass()) return false;
+		else return (((Player)obj).hashCode() == this.hashCode());
+	}
 }

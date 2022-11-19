@@ -8,7 +8,5 @@ public interface IPlayerDAO {
 
 	boolean update(Player player);
 
-	Player find(int id);
-
 	Player find(String username);
 }

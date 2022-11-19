@@ -80,19 +80,19 @@ public class PlayerDAO implements IPlayerDAO{
 		}
 		return true;
 	}
-
+	
 	@Override
-	public Player find(int id) {
+	public Player find(String username){
 		Player player = null;
 		try{
 			PreparedStatement prepare = connect.prepareStatement(
-                "SELECT * FROM user,player WHERE user_id = ? AND user.user_id = player.user_id"
+                "SELECT * FROM user,player WHERE username = ? AND user.user_id = player.user_id"
             );
-			prepare.setInt(1,id);
+			prepare.setString(1,username);
 			ResultSet result = prepare.executeQuery();
 			if(result.next()) 
 				player = new Player(
-					id,
+					result.getInt("user_id"),
 					result.getString("username"),
 					result.getString("password"),
 					result.getInt("credit"),
@@ -107,14 +107,13 @@ public class PlayerDAO implements IPlayerDAO{
 		return player;
 	}
 
-	@Override
-	public Player find(String username){
+	public Player find(int id) {
 		Player player = null;
 		try{
 			PreparedStatement prepare = connect.prepareStatement(
-                "SELECT * FROM user,player WHERE username = ? AND user.user_id = player.user_id"
+                "SELECT * FROM user,player WHERE user_id = ? AND user.user_id = player.user_id"
             );
-			prepare.setString(1,username);
+			prepare.setInt(1,id);
 			ResultSet result = prepare.executeQuery();
 			if(result.next()) 
 				player = new Player(

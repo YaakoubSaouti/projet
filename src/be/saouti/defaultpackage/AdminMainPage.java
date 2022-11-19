@@ -73,6 +73,7 @@ public class AdminMainPage extends JFrame {
 		contentPane.setLayout(null);
 		
 		JTextArea lblName = new JTextArea();
+		lblName.setLineWrap(true);
 		lblName.setBounds(437, 169, 163, 72);
 		contentPane.add(lblName);
 		
@@ -98,7 +99,6 @@ public class AdminMainPage extends JFrame {
 		JButton btnNewButton = new JButton("Logout");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Session.getInstance().destroy();
 				LoginPage lp = new LoginPage();
 				lp.setVisible(true);
 				dispose();

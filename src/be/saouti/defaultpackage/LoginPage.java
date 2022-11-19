@@ -119,16 +119,15 @@ public class LoginPage extends JFrame {
 				String password = new String(passwordTfld.getPassword());
 				User user = User.login(username, password);
 				if(user != null) {
-					Session.getInstance().set("id", Integer.toString(user.getId()));
 					if(user instanceof Administrator admin) {
 						dispose();
 						AdminMainPage amp = new AdminMainPage(admin);
 						amp.setVisible(true);
 					}
 					if(user instanceof Player player) {
-//						dispose();
-//						AdminMainPage amp = new PlayerMainPage(player);
-//						amp.setVisible(true);
+						dispose();
+						PlayerMainPage pmp = new PlayerMainPage(player);
+						pmp.setVisible(true);
 					}
 				}else JOptionPane.showMessageDialog(null, "Invalid credentials!");
 			}
