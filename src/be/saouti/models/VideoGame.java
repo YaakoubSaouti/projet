@@ -13,6 +13,7 @@ public class VideoGame {
 	private String console;
 	private int creditCost;
 	private List<Booking> bookings = new ArrayList<Booking>(); 
+	private List<Copy> copies = new ArrayList<Copy>();
 	
 	//Constructor
 	public VideoGame(int id, String name, String console, int creditCost) {
@@ -27,6 +28,7 @@ public class VideoGame {
 	public String getConsole() { return console; }
 	public int getCreditCost() { return creditCost; }
 	public List<Booking> getBookings(){ return bookings; }
+	public List<Copy> getCopies(){ return copies; }
 	
 	public void setId(int id) { this.id = id; }
 	public void setConsole(String console) { this.console = console; }
@@ -37,6 +39,9 @@ public class VideoGame {
 	}
 	public void setBookings(ArrayList<Booking> bookings){
 		this.bookings = bookings;
+	}
+	public void setCopies(List<Copy> copies){ 
+		this.copies = copies;
 	}
 	
 	//Methods
@@ -60,7 +65,6 @@ public class VideoGame {
 	public void removeBooking(Booking booking){
 		booking.delete();
 		bookings.remove(booking);
-		this.update();
 	}
 	
 	public List<Booking> getBookingsOfPlayer(Player player){
@@ -69,6 +73,21 @@ public class VideoGame {
 			if(b.getPlayer().equals(player)) bookings.add(b);
 		}
 		return bookings;
+	}
+	public void addCopy(int id,Player player){
+		copies.add(new Copy(id,player,this));
+	}
+	public void removeCopy(Copy copy){
+		copy.delete();
+		copies.remove(copy);
+	}
+	
+	public List<Copy> getCopiesOfPlayer(Player player){
+		List<Copy> copies = new ArrayList<Copy>(); 
+		for(Copy c : this.copies) {
+			if(c.getOwner().equals(player)) copies.add(c);
+		}
+		return copies;
 	}
 	
 	@Override

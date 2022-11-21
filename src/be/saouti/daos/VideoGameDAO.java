@@ -7,9 +7,8 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import be.saouti.connection.VideoGamesConnection;
 import be.saouti.models.Booking;
+import be.saouti.models.Copy;
 import be.saouti.models.VideoGame;
 
 public class VideoGameDAO implements IVideoGameDAO{
@@ -44,6 +43,16 @@ public class VideoGameDAO implements IVideoGameDAO{
 					prepare2.executeUpdate();
 				}
 			}
+			for(Copy c : videogame.getCopies()) {
+				if(c.getId() == 0) {
+					PreparedStatement prepare3 = this.connect.prepareStatement(
+						"INSERT INTO copy(videogame_id,player_id) VALUES (?,?)"
+			        );
+					prepare3.setInt(1, c.getVideogame().getId());
+					prepare3.setInt(2, c.getOwner().getId());		
+					prepare3.executeUpdate();
+				}
+			}
 			videogame = find(videogame.getId());
 	        connect.commit();
 	        return true;
@@ -56,7 +65,7 @@ public class VideoGameDAO implements IVideoGameDAO{
 			}
 			return false;
 		}finally {
-			try {
+			try{
 				connect.setAutoCommit(true);
 			} catch (SQLException e) {
 				return false;
@@ -112,6 +121,16 @@ public class VideoGameDAO implements IVideoGameDAO{
 				ResultSet result1 = prepare1.executeQuery();
 				while(result1.next()) {
 					videogame.addBooking(new BookingDAO(this.connect).find(result1.getInt(1)));
+				}
+				PreparedStatement prepare2 = connect.prepareStatement(
+						"SELECT copy_id, player_id"
+						+" FROM  copy"
+						+" WHERE copy_id = ?"
+	            );
+				prepare2.setInt(1,id);
+				ResultSet result2 = prepare2.executeQuery();
+				while(result2.next()) {
+					videogame.addCopy(result2.getInt("copy_id"),new PlayerDAO(this.connect).find(result2.getInt("player_id")));
 				}
 			}
 		}catch(SQLException e){

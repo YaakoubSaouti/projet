@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import be.saouti.models.Booking;
+import be.saouti.models.Copy;
 import be.saouti.models.Player;
 import be.saouti.models.VideoGame;
 import javax.swing.JMenuBar;
@@ -52,10 +53,17 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 	private JPanel seeBookingsPanel;
 	private JPanel bookPnl;
 	private JComboBox<VideoGame> videoGamesComboBox;
+	private JComboBox<VideoGame> videoGamesComboBox1;
 	JMenuItem seeBookingsItem;
 	JMenuItem bookItem;
+	JMenuItem seeYourCopiesItem;
+	JMenuItem addACopyItem;
 	private JLabel noItemsLbl;
 	private JTextArea lblName;
+	private JTextArea lblName1;
+	JPanel seeCopiesPanel;
+	JTable copiesTable;
+	JPanel addACopyPanel;
 
 	/**
 	 * Launch the application.
@@ -78,7 +86,7 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 	 */
 	public PlayerMainPage() {}
 
-	public PlayerMainPage(Player player){
+	public PlayerMainPage( Player player ){
 		
 		//Initialization
 		
@@ -90,6 +98,8 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		
 		bookingsPanel();
 		bookPanel();
+		copiesPanel();
+		addACopyPanel();
 		
 		//Showing the welcome panel(seeBookings);
 		seeBookings();
@@ -102,13 +112,29 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 			seeBookings();  
 		if(e.getSource() == bookItem)    
 			seeBook();  
+		if(e.getSource() == seeYourCopiesItem)    
+			seeCopies(); 
+		if(e.getSource() == addACopyItem)    
+			seeAddACopy(); 
 	}
 	
 	//Changing pages
-	private void seeBook() {
-		subTitle.setText("Book a game");
+	private void seeAddACopy() {
+		subTitle.setText("Add a copy");
 		noItemsLbl.setVisible(false);
 		seeBookingsPanel.setVisible(false);
+		seeCopiesPanel.setVisible(false);
+		bookPnl.setVisible(false);
+		addACopyPanel.setVisible(true);
+		refreshVideoGame();
+		populateVideoGameComboBoxForCopy();
+	}
+	private void seeBook() {
+		subTitle.setText("Book a game");
+		addACopyPanel.setVisible(false);
+		noItemsLbl.setVisible(false);
+		seeBookingsPanel.setVisible(false);
+		seeCopiesPanel.setVisible(false);
 		bookPnl.setVisible(true);
 		refreshVideoGame();
 		populateVideoGameComboBoxForBookings();
@@ -117,16 +143,32 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 	private void seeBookings() {
 		subTitle.setText("Your Bookings");
 		lblName.setText("");
+		addACopyPanel.setVisible(false);
 		noItemsLbl.setVisible(false);
 		bookPnl.setVisible(false);
+		seeCopiesPanel.setVisible(false);
 		seeBookingsPanel.setVisible(true);
 		refreshVideoGame();
 		populateBookingsTable();
 	}
 	
-	private void noItems(String message) {
+	private void seeCopies() {
+		subTitle.setText("Your copies");
+		lblName1.setText("");
+		addACopyPanel.setVisible(false);
+		noItemsLbl.setVisible(false);
 		seeBookingsPanel.setVisible(false);
 		bookPnl.setVisible(false);
+		seeCopiesPanel.setVisible(true);
+		refreshVideoGame();
+		populateCopiesTable();
+	}
+	
+	private void noItems(String message) {
+		addACopyPanel.setVisible(false);
+		seeBookingsPanel.setVisible(false);
+		bookPnl.setVisible(false);
+		seeCopiesPanel.setVisible(false);
 		noItemsLbl.setVisible(true);
 		noItemsLbl.setText(message);	
 	}
@@ -164,8 +206,42 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		}
 	}
 	
+	private void populateCopiesTable() {
+		List<String[]> rows = new ArrayList<String[]>();
+		for (VideoGame vg : vgs) {
+			for(Copy c : vg.getCopiesOfPlayer(player)){
+				String[] row = {
+					Integer.toString(vg.getId()),
+					Integer.toString(c.getId()),
+					vg.getName()+"("+vg.getConsole()+")",
+				};
+				rows.add(row);
+			}
+		}
+		if(rows.size()>0) {
+			copiesTable.setModel(new DefaultTableModel(
+				rows.toArray(new Object[][] {}),
+				new String[] {
+					"", "", "VideoGame"
+				}
+			));
+			copiesTable.getColumnModel().getColumn(0).setWidth(0);
+			copiesTable.getColumnModel().getColumn(0).setMinWidth(0);
+			copiesTable.getColumnModel().getColumn(0).setMaxWidth(0);
+			copiesTable.getColumnModel().getColumn(1).setWidth(0);
+			copiesTable.getColumnModel().getColumn(1).setMinWidth(0);
+			copiesTable.getColumnModel().getColumn(1).setMaxWidth(0);
+		}else{
+			noItems("You have no copies yet, to add one go to Copies -> Add a copy");
+		}
+	}
+	
 	private void populateVideoGameComboBoxForBookings() {
 		videoGamesComboBox.setModel(new DefaultComboBoxModel<VideoGame>(vgs.toArray(new VideoGame[0])));
+	}
+	
+	private void populateVideoGameComboBoxForCopy() {
+		videoGamesComboBox1.setModel(new DefaultComboBoxModel<VideoGame>(vgs.toArray(new VideoGame[0])));
 	}
 	
 	public void refreshVideoGame(){
@@ -241,6 +317,19 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		menu.add(bookItem);
 		bookItem.addActionListener(this);
 		
+		JMenu menu2 = new JMenu("Copies");
+		menu2.setForeground(new Color(95, 157, 247));
+		menu2.setFont(new Font("Gill Sans MT", Font.BOLD, 12));
+		menuBar.add(menu2);
+		
+		seeYourCopiesItem = new JMenuItem("See Your copies");
+		seeYourCopiesItem.addActionListener(this);
+		menu2.add(seeYourCopiesItem);
+		
+		addACopyItem = new JMenuItem("Add a copy");
+		menu2.add(addACopyItem);
+		addACopyItem.addActionListener(this);
+		
 		credit = new JLabel("");
 		credit.setForeground(new Color(255, 115, 29));
 		credit.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -289,7 +378,7 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 				int i = bookingTable.getSelectedRow();
 				lblName.setText((String)bookingTable.getValueAt(i, 2)+"("+(String)bookingTable.getValueAt(i, 3)+")");
 			}
-		});;
+		});
 		scrollPane1.setViewportView(bookingTable);
 		
 		JButton deletBookingBtn = new JButton("delete");
@@ -367,6 +456,115 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		btnBook.setBackground(new Color(23, 70, 162));
 		btnBook.setBounds(60, 188, 180, 23);
 		childBookPanel.add(btnBook);
+		
+		JLabel lblSelectAGame = new JLabel("Select a game");
+		lblSelectAGame.setBounds(10, 84, 180, 28);
+		childBookPanel.add(lblSelectAGame);
+		lblSelectAGame.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
+	}
+
+	public void copiesPanel(){
+		seeCopiesPanel = new JPanel();
+		seeCopiesPanel.setVisible(true);
+		seeCopiesPanel.setBorder(null);
+		seeCopiesPanel.setBackground(SystemColor.text);
+		seeCopiesPanel.setBounds(10, 171, 616, 281);
+		contentPane.add(seeCopiesPanel);
+		seeCopiesPanel.setLayout(null);
+		
+		lblName1 = new JTextArea();
+		lblName1.setLineWrap(true);
+		lblName1.setBounds(420, 37, 163, 72);
+		seeCopiesPanel.add(lblName1);
+		
+		JScrollPane scrollPane1 = new JScrollPane();
+		scrollPane1.setBounds(10, 11, 400, 230);
+		seeCopiesPanel.add(scrollPane1);
+		
+		copiesTable = new JTable();
+		copiesTable.setDefaultEditor(Object.class, null);
+		copiesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		copiesTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int i = copiesTable.getSelectedRow();
+				lblName1.setText((String)copiesTable.getValueAt(i, 2));
+			}
+		});
+		scrollPane1.setViewportView(copiesTable);
+		
+		JButton deleteCopyBtn = new JButton("delete");
+		deleteCopyBtn.setBounds(477, 120, 58, 23);
+		seeCopiesPanel.add(deleteCopyBtn);
+		deleteCopyBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int i = copiesTable.getSelectedRow();
+					int idCopy = Integer.parseInt((String)copiesTable.getModel().getValueAt(i,1));
+					int idVG = Integer.parseInt((String)copiesTable.getModel().getValueAt(i,0));
+					Copy toDelete = Copy.getById(idCopy);
+					VideoGame toDeleteFrom = VideoGame.getById(idVG);
+					toDeleteFrom.removeCopy(toDelete);
+					seeCopies();
+				}catch(ArrayIndexOutOfBoundsException ex) {
+					JOptionPane.showMessageDialog(null, "Error: No selection!");
+				}
+			}
+		});
+		deleteCopyBtn.setForeground(Color.WHITE);
+		deleteCopyBtn.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
+		deleteCopyBtn.setBorderPainted(false);
+		deleteCopyBtn.setBorder(null);
+		deleteCopyBtn.setBackground(Color.RED);
+		
+		JLabel lblDelete = new JLabel("Delete a copy");
+		lblDelete.setBounds(420, 10, 146, 28);
+		seeCopiesPanel.add(lblDelete);
+		lblDelete.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
+	}
+
+	public void addACopyPanel() {
+		addACopyPanel = new JPanel();
+		addACopyPanel.setVisible(false);
+		addACopyPanel.setBackground(new Color(255, 255, 255));
+		addACopyPanel.setBounds(20, 162, 606, 301);
+		contentPane.add(addACopyPanel);
+		addACopyPanel.setLayout(null);
+		
+		JPanel childBookPanel = new JPanel();
+		childBookPanel.setLayout(null);
+		childBookPanel.setBorder(new LineBorder(new Color(171, 173, 179), 3, true));
+		childBookPanel.setBackground(new Color(255, 247, 233));
+		childBookPanel.setBounds(156, 11, 300, 259);
+		addACopyPanel.add(childBookPanel);
+		
+		JLabel lblAddACopy = new JLabel("Add a copy");
+		lblAddACopy.setHorizontalAlignment(SwingConstants.CENTER);
+		lblAddACopy.setForeground(new Color(255, 115, 29));
+		lblAddACopy.setFont(new Font("Gill Sans MT", Font.BOLD, 23));
+		lblAddACopy.setBounds(0, 11, 300, 37);
+		childBookPanel.add(lblAddACopy);
+		
+		videoGamesComboBox1 = new JComboBox<VideoGame>();
+		videoGamesComboBox1.setBounds(10, 123, 280, 37);
+		childBookPanel.add(videoGamesComboBox1);
+		
+		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				VideoGame vg = (VideoGame)videoGamesComboBox1.getSelectedItem();
+				vg.addCopy(0,player);
+				vg.update();
+				seeCopies();
+			}
+		});
+		btnAdd.setForeground(Color.WHITE);
+		btnAdd.setFont(new Font("Gill Sans MT", Font.BOLD, 14));
+		btnAdd.setBorderPainted(false);
+		btnAdd.setBorder(new LineBorder(new Color(255, 255, 255), 2, true));
+		btnAdd.setBackground(new Color(23, 70, 162));
+		btnAdd.setBounds(60, 188, 180, 23);
+		childBookPanel.add(btnAdd);
 		
 		JLabel lblSelectAGame = new JLabel("Select a game");
 		lblSelectAGame.setBounds(10, 84, 180, 28);
