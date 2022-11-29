@@ -4,9 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
-
-import be.saouti.connection.VideoGamesConnection;
 import be.saouti.models.Booking;
 
 public class BookingDAO implements IBookingDAO{

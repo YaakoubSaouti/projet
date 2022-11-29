@@ -38,10 +38,6 @@ import java.awt.SystemColor;
 import javax.swing.JComboBox;
 
 public class PlayerMainPage extends JFrame implements ActionListener{
-
-	/**
-	 * 
-	 */
 	private JLabel subTitle;
 	private JLabel credit;
 	private JLabel usernameLbl;
@@ -64,7 +60,6 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 	JPanel seeCopiesPanel;
 	JTable copiesTable;
 	JPanel addACopyPanel;
-
 	/**
 	 * Launch the application.
 	 */
@@ -84,7 +79,9 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 	/**
 	 * Create the frame.
 	 */
-	public PlayerMainPage() {}
+	
+	public PlayerMainPage() {
+	}
 
 	public PlayerMainPage( Player player ){
 		
@@ -115,7 +112,7 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		if(e.getSource() == seeYourCopiesItem)    
 			seeCopies(); 
 		if(e.getSource() == addACopyItem)    
-			seeAddACopy(); 
+			seeAddACopy();
 	}
 	
 	//Changing pages
@@ -129,6 +126,7 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		refreshVideoGame();
 		populateVideoGameComboBoxForCopy();
 	}
+	
 	private void seeBook() {
 		subTitle.setText("Book a game");
 		addACopyPanel.setVisible(false);
@@ -183,7 +181,7 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 					Integer.toString(vg.getId()),
 					Integer.toString(b.getId()),
 					vg.getName()+"("+vg.getConsole()+")",
-					b.getBookingDate().format(formatter),
+					b.getBookingDate().format(formatter)
 				};
 				rows.add(row);
 			}
@@ -243,12 +241,14 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 	private void populateVideoGameComboBoxForCopy() {
 		videoGamesComboBox1.setModel(new DefaultComboBoxModel<VideoGame>(vgs.toArray(new VideoGame[0])));
 	}
+
 	
 	public void refreshVideoGame(){
 		vgs = VideoGame.getAll();
 	}
 	
 	public void refreshUserInfos() {
+		player.update();
 		usernameLbl.setText(player.getUsername());
 		credit.setText(player.getCredit()+" C");
 	}
@@ -351,8 +351,9 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		noItemsLbl.setVisible(false);
 	}
 	
-	public void bookingsPanel() {
+	public void bookingsPanel(){
 		seeBookingsPanel = new JPanel();
+		seeBookingsPanel.setBackground(Color.CYAN);
 		seeBookingsPanel.setVisible(true);
 		seeBookingsPanel.setBorder(null);
 		seeBookingsPanel.setBackground(SystemColor.text);
@@ -571,4 +572,5 @@ public class PlayerMainPage extends JFrame implements ActionListener{
 		childBookPanel.add(lblSelectAGame);
 		lblSelectAGame.setFont(new Font("Gill Sans MT", Font.BOLD, 15));
 	}
+
 }

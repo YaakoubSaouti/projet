@@ -2,6 +2,8 @@ package be.saouti.models;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import be.saouti.connection.VideoGamesConnection;
@@ -14,6 +16,9 @@ public class Player extends User{
 	private String pseudo;
 	private LocalDate registrationDate;
 	private LocalDate dateOfBirth;
+	private List<Loan> lended;
+	private List<Loan> borrowed;
+	private List<Integer> alreadyGivenBirthdayPresent;
 	
 	//Getters and Setters
 	
@@ -21,6 +26,8 @@ public class Player extends User{
 	public String getPseudo() { return pseudo; }
 	public LocalDate getRegistrationDate() { return registrationDate; }
 	public LocalDate getDateOfBirth() { return dateOfBirth; }
+	public List<Loan> getLended(){ return lended; }
+	public List<Loan> getBorrowed(){ return borrowed; }
 	
 	public void setCredit(int credit) { this.credit = credit; }
 	public void setPseudo(String pseudo){ this.pseudo = pseudo;}
@@ -30,7 +37,8 @@ public class Player extends User{
 	public void setDateOfBirth(LocalDate dateOfBirth){
 		this.dateOfBirth = dateOfBirth;
 	}
-	
+	public void setLended(List<Loan> lended){ this.lended = lended; }
+	public void setBorrowed(List<Loan> borrowed){ this.borrowed = borrowed; }
 	//Constructor
 	public Player() {}
 	public Player(int id,String username,String password,
@@ -40,6 +48,8 @@ public class Player extends User{
 		this.pseudo = pseudo;
 		this.registrationDate = registrationDate;
 		this.dateOfBirth = dateOfBirth;
+		lended = new ArrayList<Loan>();
+		borrowed = new ArrayList<Loan>();
 	}
 	
 	//Methods
@@ -69,6 +79,29 @@ public class Player extends User{
 		return true;
 	}
 	//Non Static
+	public boolean loanAllowed() {
+		return credit>0;
+	}
+	
+	public void addBirthdayBonus() {
+		LocalDate rd = getRegistrationDate();
+		int yrd = rd.getYear();
+		LocalDate t = LocalDate.now();
+		int yt = rd.getYear();
+		for (int i = yrd; i < yt; i++){
+			boolean alreadygiven = false;
+			for(Integer j : alreadyGivenBirthdayPresent) {
+				if((int)j==i){
+					alreadygiven = true;
+				}
+			}
+			if(!alreadygiven && (t.isAfter(dateOfBirth) || t.equals(dateOfBirth))) { 
+				credit += 2;
+				alreadyGivenBirthdayPresent.add(i);
+			}
+		}
+	}
+	
 	public boolean create(){
 		credit = 10;
 		registrationDate = LocalDate.now();
@@ -93,4 +126,15 @@ public class Player extends User{
 		if (obj ==null || obj.getClass()!=this.getClass()) return false;
 		else return (((Player)obj).hashCode() == this.hashCode());
 	}
+	
+	public void addLended(Loan loan){
+		loan.setLender(this);
+		lended.add(loan);
+	}
+	
+	public void addBorrowed(Loan loan) {
+		loan.setBorrower(this);
+		borrowed.add(loan);
+	}
+
 }

@@ -144,7 +144,7 @@ public class AdminMainPage extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int i = table.getSelectedRow();
 				if(i >= 0) {
-					VideoGame vg = VideoGame.getVideoGame(Integer.parseInt((String)table.getValueAt(i, 0)));
+					VideoGame vg = VideoGame.getById(Integer.parseInt((String)table.getValueAt(i, 0)));
 					try {
 						vg.setCreditCost(Integer.parseInt(costFld.getText()));
 						vg.update();

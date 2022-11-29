@@ -1,5 +1,7 @@
 package be.saouti.models;
 
+import java.time.LocalDate;
+
 import be.saouti.connection.VideoGamesConnection;
 import be.saouti.daos.CopyDAO;
 
@@ -35,5 +37,16 @@ public class Copy {
 	}
 	public static Copy getById(int id) {
 		return new CopyDAO(VideoGamesConnection.getInstance()).find(id);
+	}
+	public void releaseCopy() {
+		currentLoan.endLoan();
+		currentLoan = null;
+	}
+	
+	public void borrow(int id,LocalDate startDate, LocalDate endDate,Player borrower){
+		currentLoan =  new Loan(id,owner,borrower,startDate,endDate,this);
+	}
+	public boolean isAvailable() {
+		return currentLoan==null;
 	}
 }
